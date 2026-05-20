@@ -31,7 +31,7 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 -- Helpers used by other migrations' policies.
-create or replace function public.current_role()
+create or replace function public.app_role()
 returns public.user_role
 language sql
 stable
@@ -48,7 +48,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() in ('agent', 'admin'), false);
+  select coalesce(public.app_role() in ('agent', 'admin'), false);
 $$;
 
 create or replace function public.is_admin()
@@ -58,7 +58,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() = 'admin', false);
+  select coalesce(public.app_role() = 'admin', false);
 $$;
 
 -- Profile policies.
